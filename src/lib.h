@@ -20,7 +20,6 @@ int getPrecedence(char c);
 void convertToPostfix(char *infix, char *postfix);
 Token *parse_expression(char *expression, int *token_count, double x);
 double switc_operator(char str, double operand1, double operand2);
-double calculate_expression(Token *tokens, int token_count) ;
-
+double calculate_expression(Token *tokens, int token_count);
 
 #endif

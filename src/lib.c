@@ -1,9 +1,9 @@
 #include "lib.h"
+
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-
 
 // Function to check if a character is an operator
 int isOperator(char c) { return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^'); }
@@ -19,7 +19,7 @@ int isOperand(char c, char *infix, int i) {  //проерка на вхожде�
 }
 
 char res_char(char *infix, int i, char c) {  //возвращение результатов сокращенно
-    char res = '0';
+    char res;
     if (c == 's' && i + 2 < (int)strlen(infix) && infix[i + 1] == 'i' && infix[i + 2] == 'n') {
         res = 's';
     } else if (c == 'c' && i + 2 < (int)strlen(infix) && infix[i + 1] == 'o' && infix[i + 2] == 's') {
@@ -100,8 +100,6 @@ void convertToPostfix(char *infix, char *postfix) {
     postfix[j] = '\0';
 }
 
-
-
 // Функция для разбора выражения на токены
 Token *parse_expression(char *expression, int *token_count, double x) {
     Token *tokens = malloc(MAX_TOKENS * sizeof(Token));
@@ -123,7 +121,7 @@ Token *parse_expression(char *expression, int *token_count, double x) {
             tokens[count].token = num_str;
             tokens[count].type = 0;
             count++;
-            free(num_str);
+            // free(num_str);
         } else if (*token == 'x') {
             token++;
             tokens[count].token = malloc(20 * sizeof(char));
@@ -170,6 +168,7 @@ double switc_operator(char str, double operand1, double operand2) {
 
 double calculate_expression(Token *tokens, int token_count) {
     double stack[token_count];
+    stack[0] = 0;
     double operand2 = 0;
     double operand1 = 0;
     int stack_index = 0;
@@ -181,28 +180,26 @@ double calculate_expression(Token *tokens, int token_count) {
                 tokens[i].token[0] == '/') {
                 operand2 = stack[--stack_index];
                 operand1 = stack[--stack_index];
-            }
-            if (tokens[i].token[0] == '+' || tokens[i].token[0] == '-' || tokens[i].token[0] == '*' || tokens[i].token[0] == '/'){
                 stack[stack_index++] = switc_operator(tokens[i].token[0], operand1, operand2);
             }
-            switch (tokens[i].token[0]){
+            switch (tokens[i].token[0]) {
                 case 's':
-                    stack[stack_index++] = sin(stack[--stack_index]);
+                    stack[stack_index - 1] = sin(stack[stack_index - 1]);
                     break;
                 case 'c':
-                    stack[stack_index++] = cos(stack[--stack_index]);
+                    stack[stack_index - 1] = cos(stack[stack_index - 1]);
                     break;
                 case 't':
-                    stack[stack_index++] = tan(stack[--stack_index]);
+                    stack[stack_index - 1] = tan(stack[stack_index - 1]);
                     break;
                 case 'C':
-                    stack[stack_index++] = 1 / tan(stack[--stack_index]);
+                    stack[stack_index - 1] = 1 / tan(stack[stack_index - 1]);
                     break;
                 case 'S':
-                    stack[stack_index++] = sqrt(stack[--stack_index]);
+                    stack[stack_index - 1] = sqrt(stack[stack_index - 1]);
                     break;
                 case 'l':
-                    stack[stack_index++] = log(stack[--stack_index]);
+                    stack[stack_index - 1] = log(stack[stack_index - 1]);
                     break;
             }
         }
